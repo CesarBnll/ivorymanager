@@ -1,0 +1,47 @@
+.container {
+    max-width: 600px;
+}
+
+.form-control { 
+    background-color: #f1eeea;
+    border-width: 1px;
+    border-color: black;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+}
+
+.btn-search {
+    max-width: fit-content;
+    padding: 6px 10px;
+    background: #ddd;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn {
+    background: black;
+    color: white;
+}
+
+.btn:hover {
+    background: #3a0b0b;
+    color: white;
+}
+
+.btn-back {
+    color: black;
+    font-size: large;
+    float: left;
+    position: absolute;
+}
+
+.btn-back:hover {
+    color: #3a0b0b;
+}
+
+.btn-back:active {
+    color: #3a0b0b;
+}

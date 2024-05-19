@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="icon" type="images/x-icon" href="/img/isotipo con fondo.png"/>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Montserrat Font Family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Propietary CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/admin/admin_actions.css">
+
+    <!-- Custom Scripts -->
+    <script src="/scripts/tab.js" defer></script>
+
+</head>
+<body class="montserrat-rg">
+    <div class="d-flex">
+        <a href="/admin" class="btn-back mt-3 ms-2 montserrat-rg"><i class="fa fa-chevron-left p-2"></i>Atrás</a>
+        <img src="/img/logotipo-1.png" class="mx-auto my-5 p-3 ivory-logo" alt="Ivory Homes">
+    </div>
+
+    <div class="tab d-flex mx-auto justify-content-evenly">
+        <button id=<%= tab1 %> class="tablinks flex-fill" onclick="openTab(event, 'add')">Añadir</button>
+        <button id=<%= tab2 %> class="tablinks flex-fill" onclick="openTab(event, 'remove')">Eliminar</button>
+    </div>
+
+    <div id="add" class="tabcontent container">
+        <p class="h1 montserrat-bd p-4 mb-3 text-center">Añadir un apartamento</p>
+        <form action="/admin/apartments" method="post" style="padding: 0px 12px;">
+            <div class="row my-3 mx-auto">
+                <span class="form-label h5">Nombre del Apartamento:</span>
+                <input type="text" class="form-control" placeholder="Nombre" name="name">
+            </div>
+            <div class="row my-3 mx-auto">
+                <span class="form-label h5">Descripción del Apartamento:</span>
+                <input type="text" class="form-control" placeholder="Descripción" name="description">
+            </div>
+            <div class="row pt-2 pb-4 mt-4 mx-auto">
+                <button type="submit" class="col-6 btn mx-auto">Añadir</button>
+            </div>
+            <% if (message == 'success') { %>
+                <div class="alert alert-success" role="alert">
+                    Apartamento añadido con éxito!
+                </div>
+            <% } else if (message == 'missing') { %>
+                <div class="alert alert-warning" role="alert">
+                    Por favor rellene el campo Nombre!
+                </div>
+            <% } %>
+        </form>
+    </div>
+    
+    <div id="remove" class="tabcontent container">
+        <h1 class="h1 montserrat-bd p-4 mb-3 text-center">Eliminar un apartamento</h1>
+        <form action="/admin/apartments:delete" method="post" style="padding: 0px 12px;">
+            <div class="row my-3 mx-auto">
+                <span class="form-label h5">Nombre del Apartamento:</span>
+                <div class="search-box">
+                    <div class="d-flex">
+                        <input type="search" id="search" class="form-control" placeholder="Buscar.." name="search">
+                        <div class="col btn-search"><i class="fa fa-search"></i></div>
+                    </div>
+                </div>
+                <div class="result-box" result-box>
+                </div>
+            </div>
+            <div class="row pt-2 pb-4 mt-4">
+                <button class="col-6 btn mx-auto" type="submit">Eliminar</button>
+            </div>
+            <% if (search_msg == 'success') { %>
+                <div class="alert alert-success" role="alert">
+                    Apartamento eliminado con éxito!
+                </div>
+            <% } else if (search_msg == 'missing') { %>
+                <div class="alert alert-warning" role="alert">
+                    Por favor rellene el campo Nombre!
+                </div>
+            <% } %>
+        </form>
+    </div>  
+
+    <dvi id="apt" data-apt="<%= apartments %>"></dvi>
+    <script>
+        const resultBox = document.querySelector('[result-box]')
+        const searchInput = document.getElementById('search');
+            
+        const apartments = JSON.parse(document.getElementById('apt').dataset.apt);
+        
+        searchInput.onkeyup = () => {
+            let result = []
+            let input = searchInput.value;
+            if (input.length) {
+                for (let i =0; i < apartments.length; i++) {
+                    const isVisible = apartments[i].name.toLowerCase().includes(input.toLowerCase());
+                    if (isVisible) result.push(apartments[i].name);
+                }
+            }
+            display(result);
+        };
+
+        function display(result) {
+            const content = result.map((list) => {
+                return "<li onclick=selectInput(this)>" + list + "</li>";
+            });
+
+            resultBox.innerHTML = "<ul>" + content.join('') + "</ul>";
+        }
+
+        function selectInput(list) {
+            searchInput.value = list.innerHTML;
+            resultBox.innerHTML = "";
+        }
+    </script>
+</body>
+</html>

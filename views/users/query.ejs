@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivory Llaves</title>
+    <link rel="icon" type="images/x-icon" href="/img/isotipo con fondo.png"/>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- Montserrat Font Family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Propietary CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/users/key_actions.css">
+
+    <!-- Propietary Scripts -->
+    <script src="/scripts/user_searchkeysets.js"></script>
+</head>
+<body>
+    <div class="d-flex">
+        <a href="/users" class="btn-back mt-3 ms-2 montserrat-rg"><i class="fa fa-chevron-left p-2"></i>Atrás</a>
+        <img src="/img/logotipo-1.png" class="mx-auto my-5 p-3 ivory-logo" alt="Ivory Homes">
+    </div>
+
+    <div class="container p-5">
+    <% if (!keysets) { %>
+        <h1 class="montserrat-bd p-4 my-5 text-center">Consultar una llave</h1>
+        <form action="/users/query" method="post" class="container">
+            <div class="row my-3 mx-auto">
+                <span class="form-label h5">Buscar por Apartamento:</span>
+                <div class="search-box">
+                    <div class="d-flex">
+                        <input id="search_apt" class="col form-control" type="search" placeholder="Buscar.." name="apartment">
+                        <div class="col btn-search"><i class="fa fa-search"></i></div>
+                    </div>
+                </div>
+                <div class="result-box" result-box-apt>
+                </div>
+            </div>
+            <div class="row pt-2 pb-4 mt-4">
+                <button type="submit" class="col-6 btn mx-auto">Buscar</button>
+            </div>
+            <% if (message != "") { %>
+                <div class="alert alert-warning" role="alert">
+                    Por favor rellene el campo!
+                </div>
+            <% } %>
+        </form>
+    <% } else { %>
+        <table class="my-table">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apartamento</th>
+                    <th scope="col">Responsable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let row = 0; row < keysets.length; row++) { %>
+                    <tr>
+                        <% if (keysets[row].extra == 'yes') { %>
+                            <td><%= keysets[row].name + " (Extra)" %></td>
+                        <% } else { %>
+                            <td><%= keysets[row].name %></td>
+                        <% } %>
+                        <td><%= keysets[row].apartment %></td>
+                        <td><%= keysets[row].user %></td>
+                    </tr>
+                <% } %>    
+            </tbody>
+        </table>
+        <div class="row pt-2 pb-4 mt-4">
+            <a href="/users/query" class="col-6 btn mx-auto">Buscar de Nuevo</a>
+        </div>
+    <% } %>
+    </div>
+
+    <div id="apt" data-apt="<%= apartments %>"></div>
+</body>
+</html>

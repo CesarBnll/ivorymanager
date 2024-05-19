@@ -1,0 +1,172 @@
+.container {
+    max-width: 600px;
+}
+
+.form-control { 
+    background-color: #f1eeea;
+    border-width: 1px;
+    border-color: black;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+}
+
+.dropdown-menu {
+    border-radius: 0px;
+    width: 95%;
+}
+
+.dropdown-item:hover {
+    background-color: #AC7D88;
+    color: white;
+}
+
+.btn-search {
+    max-width: fit-content;
+    padding: 6px 10px;
+    background: #ccc;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn {
+    background: black;
+    color: white;
+}
+
+.btn:hover {
+    background: gray;
+    color: white;
+}
+
+.btn-back {
+    color: black;
+    font-size: medium;
+    float: left;
+    position: absolute;
+}
+
+.btn-back:hover {
+    color: gray;
+}
+
+.btn:active {
+    background-color: #AC7D88;
+    color: white;
+}
+/* Style the tab */
+.tab {
+    max-width: 600px;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0.8rem .5rem;
+  transition: 0.3s;
+  font-size: large;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  border-top: none;
+  background-color: rgba(150, 150, 150, 0.125);
+  height: calc(100vh - 249.49px);
+}
+
+table.my-table {
+    width: 100%;
+    max-height: 96%;
+    background-color: #f1f1f1;
+    box-shadow: 0 .2rem .6rem #0005;
+    border-radius: .4rem;
+    overflow: hidden;
+}
+
+.my-table::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.my-table::-webkit-scrollbar-thumb {
+    border-radius: .4rem;
+    background-color: #0004;
+    visibility: hidden;
+}
+
+.my-table:hover::-webkit-scrollbar-thumb {
+    visibility: visible;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    padding: .6rem;
+}
+
+.my-table thead th {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: #ddd;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #0000000b;
+}
+
+tbody tr:hover {
+    background-color: #ccc;
+}
+
+.result-box ul {
+    background-color: #f1eeea;
+    padding: 10px 8px;
+    margin: 0;
+}
+
+.result-box ul li {
+    list-style: none;
+    padding: 10px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.result-box ul li:hover {
+    background-color: #ccc;
+}
+
+.select-drop {
+    background-color: #f1eeea;
+    height: 37px;
+    padding: 8px 14px;
+    border-width: 1px;
+    border-color: black;
+    border-top: 0;
+    border-right: 0;
+    border-radius: 0;
+}
+
+@media screen and (max-width: 500px) {
+    .tab button {
+        font-size: large;
+    }
+}
