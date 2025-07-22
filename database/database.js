@@ -9,7 +9,7 @@ const connection = createConnection({
     database: process.env.DB_NAME
 });
 
-console.log("DOTENV PORT: " + process.env.DB_PORT);
+console.log("DB_PORT: " + process.env.DB_PORT);
 
 const getConnection = () => {
     return connection;
