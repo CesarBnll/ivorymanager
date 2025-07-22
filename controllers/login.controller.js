@@ -23,6 +23,7 @@ const auth = async (req, res) => {
         }
         
         req.session.user_id = user[0].id;
+        req.session.user_type = user[0].type;
         if (user[0].type == 'admin') {
             return res.redirect('/admin');
         } else {
@@ -61,4 +62,13 @@ const recovery = async (req, res) => {
     }
 };
 
-module.exports = { auth, recovery }
+const logout = (req, res) => {
+    req.session.destroy();
+    return res.redirect('/login');
+};
+
+module.exports = { 
+    auth,
+    logout,
+    recovery
+}

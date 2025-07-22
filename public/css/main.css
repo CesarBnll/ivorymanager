@@ -7,6 +7,10 @@ html {
   top: 45%;
 }
 
+.d-grid {
+  max-width: 600px;
+}
+
 .montserrat-lt {
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
@@ -63,10 +67,4 @@ body {
 
 .search-box {
   padding: 0px;
-}
-
-@media screen and (max-width: 800px) {
-  .ivory-logo {
-      max-height: 100px;
-  }
 }

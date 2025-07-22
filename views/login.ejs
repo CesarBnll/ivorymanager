@@ -25,7 +25,7 @@
 <body class="montserrat-rg">
     <form action="/login" method="post" class="position-absolute top-45 start-50 translate-middle">
         <div class="d-flex">
-            <img src="/img/logotipo-1.png" class="mx-auto mb-4 img-fluid" alt="Ivory Homes">
+            <img src="/img/logotipo-1.png" class="mx-auto mt-5 mb-4 img-fluid" alt="Ivory Homes">
         </div>
         <p class="h2 text-center montserrat-bd">Iniciar Sesión</p>
         <div class="wrap-input my-3">
@@ -45,19 +45,19 @@
         </div>
 
         <% if (message == "missing") { %>
-            <div class="alert alert-warning mt-4" role="alert">
+            <div class="alert alert-warning mt-3" role="alert">
                 Por favor rellene todos los campos!
             </div>
         <% } else if (message == "false") { %>
-            <div class="alert alert-danger mt-4" role="alert">
+            <div class="alert alert-danger mt-3" role="alert">
                 Usuario y/o contraseña incorrectos!
             </div>
         <% } else if (message == "success") { %>
-            <div class="alert alert-success mt-4" role="alert">
+            <div class="alert alert-success mt-3" role="alert">
                 Contraseña actualizada!
             </div>
         <% } else if (message == "auth") { %>
-            <div class="alert alert-warning mt-4" role="alert">
+            <div class="alert alert-warning mt-3" role="alert">
                 Debe iniciar sesión para poder acceder a la página!
             </div>
         <% } %>

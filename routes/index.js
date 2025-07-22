@@ -4,6 +4,10 @@ const admin_controller = require('../controllers/admin.controller');
 const users_controller = require('../controllers/users.controller');
 const router = express.Router();
 
+router.get('/', function(req, res) {
+  res.redirect('/login');
+})
+
 /* Login page. */
 router.get('/login', function(req, res, next) {
   let options = {
@@ -15,13 +19,13 @@ router.get('/login', function(req, res, next) {
   } else if (req.query.recovery) {
     options["message"] = "success";
   }
-  res.render('login', options);
+  return res.render('login', options);
 });
 router.post('/login', login_controller.auth);
 
 /* Recovery page. */
 router.get('/login/recovery', function(req, res, next) {
-  res.render('recovery', { title: 'Reestablecer', message: '' });
+  return res.render('recovery', { title: 'Reestablecer', message: '' });
 });
 router.post('/login/recovery', login_controller.recovery);
 
@@ -29,12 +33,16 @@ router.post('/login/recovery', login_controller.recovery);
 /* Users pages. */
 router.get('/users', function(req, res, next) {
   if (!req.session.user_id) {
-    res.redirect('/login?redirect=true');
+    return res.redirect('/login?redirect=true');
   } else {
-    res.render('users', { title: "Ivory Llaves" });
+    let options = {
+        title: "Ivory Llaves",
+        user_type: req.session.user_type
+    }
+    return res.render('users', options);
   }
 });
-router.post('/users/logout', users_controller.logout);
+router.post('/users/logout', login_controller.logout);
 
 router.get('/users/pick-up', users_controller.render_pickup);
 router.post('/users/pickup-keys', users_controller.pickup_getKeysets);
@@ -49,13 +57,13 @@ router.post('/users/return', users_controller.returnKey);
 
 /* Admin pages. */
 router.get('/admin', function(req, res, next) {
-  if (!req.session.user_id) {
-    res.redirect('/login?redirect=true');
+  if ((!req.session.user_id) || req.session.user_type != 'admin') {
+    return res.redirect('/login?redirect=true&admin=false');
   } else {
-    res.render('admin', { title: "Ivory Homes" });
+    return res.render('admin', { title: "Ivory Homes" });
   }
 });
-router.post('/admin/logout', admin_controller.logout);
+router.post('/admin/logout', login_controller.logout);
 
 router.get('/admin/general', admin_controller.getTables);
 router.get('/admin/general:search', admin_controller.getTablesSearch);
@@ -68,12 +76,15 @@ router.post('/admin/apartments:delete', admin_controller.deleteApartment);
 router.get('/admin/keysets', admin_controller.renderKeysets);
 router.post('/admin/keysets', admin_controller.insertKeyset);
 router.post('/admin/keysets:getKeysets', admin_controller.getKeysets);
-router.post('/admin/keysets:delete', admin_controller.deleteKeyset);
+router.post('/admin/deleteKeyset', admin_controller.deleteKeyset);
 
 router.get('/admin/users', admin_controller.renderUsers);
 router.post('/admin/users', admin_controller.insertUser);
 router.post('/admin/users:delete', admin_controller.deleteUser);
 
 router.get('/admin/history', admin_controller.renderHistory);
+router.post('/admin/history/users', admin_controller.historyUsers);
+router.get('/admin/history/admins', admin_controller.renderHAdmins);
+router.post('/admin/history/admins', admin_controller.historyAdmins);
 
 module.exports = router;

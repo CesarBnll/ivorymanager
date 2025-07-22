@@ -26,6 +26,7 @@
     <!-- Propietary Scripts -->
     <script src="/scripts/tab.js" defer></script>
     <script src="/scripts/admin_generalsearch.js" defer></script>
+    <script src="/scripts/modal.js" defer></script>
 </head>
 <body class="montserrat-rg">
     <div class="d-flex">
@@ -35,28 +36,38 @@
 
     <div class="tab d-flex mx-auto justify-content-evenly">
         <button id="<%= tab1 %>" class="tablinks flex-fill" onclick="openTab(event, 'apartments')">Apartamentos</button>
-        <button id="<%= tab2 %>" class="tablinks flex-fill" onclick="openTab(event, 'keysets')">Llaves</button>
+        <button id="<%= tab2 %>" class="tablinks flex-fill" onclick="openTab(event, 'keysets')">Llaveros</button>
         <button id="<%= tab3 %>" class="tablinks flex-fill" onclick="openTab(event, 'users')">Usuarios</button>
     </div>
 
     <div id="apartments" class="tabcontent container">
         <div class="pt-3"></div>
-        <table class="my-table">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th class="text-center" scope="col">Llaves</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(let row = 0; row < table1.length; row++) { %>
+        <div class="scrollable-table">
+            <table class="my-table">
+                <thead>
                     <tr>
-                        <td><%= table1[row].name %></td>
-                        <td class="text-center"><strong><%= table1[row].keys %></strong></td>
+                        <th scope="col">Nombre</th>
+                        <th class="text-center" scope="col">Llaveros</th>
                     </tr>
-                <% } %>    
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% for(let row = 0; row < table1.length; row++) { %>
+                        <tr>
+                            <td><%= table1[row].name %></td>
+                            <td class="text-center">
+                                <form action="/admin/general:getKeysets" method="post">
+                                    <input type="hidden" value="<%= table1[row].name %>" name="apartment">
+                                  <input type="hidden" value="" name="user">
+                                    <button class="btn" type="submit">
+                                        <strong><%= table1[row].keys %></strong>  
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>    
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div id="keysets" class="tabcontent container">
@@ -95,29 +106,42 @@
                 <% } %>
             </form>
         <% } else { %>
-            <table class="my-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Apartamento</th>
-                        <th scope="col">Responsable</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for(let row = 0; row < keysets.length; row++) { %>
+            <div class="scrollable-table">
+                <table class="my-table">
+                    <thead>
                         <tr>
-                            <% if (keysets[row].extra == 'yes') { %>
-                                <td><%= keysets[row].name + " (Extra)" %></td>
-                            <% } else { %>
-                                <td><%= keysets[row].name %></td>
-                            <% } %>
-                            <td><%= keysets[row].apartment %></td>
-                            <td><%= keysets[row].user %></td>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apartamento</th>
+                            <th scope="col">Ubicación</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Llaves</th>
                         </tr>
-                    <% } %>    
-                </tbody>
-            </table>
-            <div class="row pt-2 pb-4 mt-4">
+                    </thead>
+                    <tbody>
+                        <% for(let row = 0; row < keysets.length; row++) { %>
+                            <tr>
+                                <td><%= keysets[row].name %></td>
+                                <td><%= keysets[row].apartment %></td>
+                                <td><%= keysets[row].location %></td>
+                                <td><%= keysets[row].user %></td>
+                                <td><button class="btn" onclick="displayModal(<%= row %>)">Ver</button></td>
+                            </tr>
+                            <div class="modal">
+                                <div class="modal-content">
+                                    <div class="flex">
+                                          <span class="close" onclick="closeModal(<%= row %>)">&times;</span>
+                                          <h3><%= keysets[row].name %></h3>
+                                    </div>
+                                    <div class="flex">
+                                        <p class="my-auto"><%= keysets[row].description %></p>
+                                    </div>
+                                </div>  
+                            </div>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row pt-2 mt-3">
                 <a href="/admin/general:search" class="col-6 btn mx-auto">Buscar de Nuevo</a>
             </div>
         <% } %>
@@ -125,24 +149,26 @@
     
     <div id="users" class="tabcontent container">
         <div class="pt-3"></div>
-        <table class="my-table">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Teléfono</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(let row = 0; row < table3.length; row++) { %>
+        <div class="scrollable-table">
+            <table class="my-table">
+                <thead>
                     <tr>
-                        <td><%= table3[row].name %></td>
-                        <td><%= table3[row].email %></td>
-                        <td><%= table3[row].phone %></td>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Teléfono</th>
                     </tr>
-                <% } %>    
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% for(let row = 0; row < table3.length; row++) { %>
+                        <tr>
+                            <td><%= table3[row].name %></td>
+                            <td><%= table3[row].email %></td>
+                            <td><%= table3[row].phone %></td>
+                        </tr>
+                    <% } %>    
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div id="apt" data-apt="<%= apartments %>"></div>

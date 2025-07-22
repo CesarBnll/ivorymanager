@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="/css/users/key_actions.css">
 
     <!-- Propietary Scripts -->
-    <script src="/scripts/search_key.js" defer></script>
+    <script src="/scripts/search_keyset.js" defer></script>
+    
 </head>
 <body>
     <div class="d-flex">
@@ -31,8 +32,8 @@
         <img src="/img/logotipo-1.png" class="mx-auto my-5 p-3 ivory-logo" alt="Ivory Homes">
     </div>
 
-    <div class="container p-5">
-        <h1 class="montserrat-bd p-4 my-5 text-center">Recoger una llave</h1>
+    <div class="container ps-5 pe-5 pb-5 pt-3">
+        <h1 class="montserrat-bd mb-4 text-center">Recoger un llavero</h1>
         <form action=<%= action %> method="post">
             <div class="row my-3 mx-auto">
                 <span class="form-label h5">Nombre del Apartamento:</span>
@@ -50,13 +51,18 @@
                     <button class="col-6 btn mx-auto" type="submit">Buscar</button>
                 </div>
             <% } else { %>
+                <div class="row my-3 mx-auto">
+                    <span class="form-label h5">Ubicación:</span>
+                    <input type="text" class="form-control" placeholder="Ubicación" name="location">
+                </div>
                 <div class="row mx-auto input-group my-3">
-                    <span class="form-label h5">Llave:</span>
-                    <div class="dropdown" dropdown>
-                        <input type="text" placeholder="Escoja una llave" id="dropdown-toggle" class="form-control dropdown-toggle" data-bs-toggle="dropdown" name="keyset">
-                        <ul class="dropdown-menu" dropdown-menu>
-                        </ul>
-                    </div>
+                    <span class="form-label h5">Llavero:</span>
+                    <select name="keyset" class="form-control form-select p-2">
+                        <option class="select-option" value="" disabled="disabled" selected="selected">Seleccione un llavero</option>
+                        <% keysets.forEach(keyset => { %>
+                            <option class="select-option" value="<%= keyset.name %>"><%= keyset.name %></option>
+                        <% }) %>
+                    </select>
                 </div>
                 <div class="row pt-2 pb-4 mt-4">
                     <button class="col-6 btn mx-auto" type="submit">Registrar</button>
@@ -65,16 +71,19 @@
         </form>
         <% if (message == "success") { %>
             <div class="alert alert-success" role="alert">
-                Llave Recogida!
+                Llavero Recogido!
             </div>
         <% } else if (message == "missing") { %>
             <div class="alert alert-warning" role="alert">
                 Por favor rellene todos los campos!
             </div>
+        <% } else if (message == "fail") { %>
+            <div class="alert alert-danger" role="alert">
+                Por favor seleccione un apartamento válido!
+            </div>
         <% } %>
     </div>
 
     <div id="apt" data-apt="<%= apartments %>"></div>
-    <div id="kst" data-kst="<%= keysets %>"></div>
 </body>
 </html>

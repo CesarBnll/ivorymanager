@@ -6,14 +6,16 @@
 .btn:hover {
   background-color: gray;
   color: white;
-  size-adjust: 150%;
 }
 
 .wrap-input {
   position: relative;
-  width: 100%;
   z-index: 1;
   margin-bottom: 10px;
+}
+
+form {
+  max-width: 300px;
 }
 
 .form-control {

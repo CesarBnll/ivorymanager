@@ -6,11 +6,12 @@ const render_pickup = async (req, res) => {
             return res.redirect('/login?redirect=true');
         }
         let options = {
-            title: "Recoger Llave",
+            title: "Recoger Llavero",
             message: "",
             keysets: "",
             action: "/users/pickup-keys"
         }
+        if (req.query.msg) { options["message"] = req.query.msg; }
         const connection = await getConnection();
         let apartments = await connection.query(`SELECT name FROM apartments`);
         apartments = JSON.stringify(apartments);
@@ -28,26 +29,25 @@ const pickup_getKeysets = async (req, res) => {
         }
         let { apartment } = req.body;
         let options = {
-            title: "Recoger Llave",
+            title: "Recoger Llavero",
             keysets: "",
             message: "",
             action: "/users/pick-up"
         }
         const connection = await getConnection();
         if (apartment == "") {
-            options['action'] = "/users/pickup-keys"
-            options["apartments"] = await connection.query("SELECT name FROM apartments");
-            options["message"] = "missing";
-            return res.status(400).render('./users/pick-up', options);
-        } 
+            return res.redirect('/users/pick-up?msg=missing');
+        }
         let keysets = await connection.query(`
             SELECT name
             FROM keysets
             WHERE apartment = (SELECT id FROM apartments WHERE name = '${apartment}') and 
-                  user = '1'
+                  location = 'Oficina'
         `);
+        if (keysets.length == 0) {
+            return res.redirect('/users/pick-up?msg=fail');
+        }
         options["apartments"] = JSON.stringify({name: apartment});
-        keysets = JSON.stringify(keysets);
         options["keysets"] = keysets;
         return res.status(200).render('./users/pick-up', options);
     } catch (err) {
@@ -60,14 +60,14 @@ const pick_up = async (req, res) => {
         if (!req.session.user_id) {
             return res.redirect('/login?redirect=true');
         }
-        let { apartment, keyset } = req.body;
+        let { apartment, keyset, location } = req.body;
         let options = {
-            title: "Recoger Llave",
+            title: "Recoger Llavero",
             message: "",
             keysets: "",
             action: "/users/pickup-keys"
         }
-        if (keyset == '') {
+        if (keyset == '' || location == '') {
             options["apartments"] = JSON.stringify({name: apartment});
             options["message"] = "missing";
             return res.status(400).render('./users/pick-up', options);
@@ -80,7 +80,7 @@ const pick_up = async (req, res) => {
         apartment = await connection.query("SELECT id FROM apartments WHERE name = ?", apartment);
         await connection.query(`
             UPDATE keysets
-            SET user = '${user}'
+            SET user = '${user}', location = '${location}'
             WHERE name = '${keyset}' and apartment = '${apartment[0].id}'
         `);
         keyset = await connection.query(`
@@ -89,8 +89,8 @@ const pick_up = async (req, res) => {
             WHERE name = '${keyset}' and apartment = '${apartment[0].id}'
         `);
         await connection.query(`
-            INSERT INTO history (sender, receiver, keyset)
-            VALUES ('1', '${user}', '${keyset[0].id}')
+            INSERT INTO user_history (user, keyset, action, location, apartment)
+            VALUES ('${user}', '${keyset[0].id}', 'Recoger', '${location}', '${apartment[0].id}')
         `);
         options['message'] = 'success';
         return res.status(200).render('./users/pick-up', options);
@@ -106,10 +106,13 @@ const render_return = async (req, res) => {
             return res.redirect('/login?redirect=true');
         }
         let options = {
-            title: "Recoger Llave",
+            title: "Devolver Llavero",
             message: "",
             keysets: "",
             action: "/users/return-keys"
+        }
+        if (req.query.msg) {
+          options["message"] = req.query.msg;
         }
         const connection = await getConnection();
         let apartments = await connection.query(`SELECT name FROM apartments`);
@@ -128,27 +131,26 @@ const return_getKeysets = async (req, res) => {
         }
         let { apartment } = req.body;
         let options = {
-            title: "Recoger Llave",
+            title: "Devolver Llavero",
             keysets: "",
             message: "",
             action: "/users/return"
         }
         const connection = await getConnection();
         if (apartment == "") {
-            options['action'] = "/users/return-keys"
-            options["apartments"] = await connection.query("SELECT name FROM apartments");
-            options["message"] = "missing";
-            return res.status(400).render('./users/return', options);
+            return res.redirect('/users/return?msg=missing');
         } 
         let user = req.session.user_id;
         let keysets = await connection.query(`
             SELECT name
             FROM keysets
             WHERE apartment = (SELECT id FROM apartments WHERE name = '${apartment}') and 
-                  user = '${user}'
+                  location != 'Oficina'
         `);
+        if (keysets.length == 0) {
+            return res.redirect('/users/return?msg=fail');
+        }
         options["apartments"] = JSON.stringify({name: apartment});
-        keysets = JSON.stringify(keysets);
         options["keysets"] = keysets;
         return res.status(200).render('./users/return', options);
     } catch (err) {
@@ -163,7 +165,7 @@ const returnKey = async (req, res) => {
         }
         let { apartment, keyset } = req.body;
         let options = {
-            title: "Recoger Llave",
+            title: "Devolver Llavero",
             message: "",
             keysets: "",
             action: "/users/return-keys"
@@ -181,7 +183,7 @@ const returnKey = async (req, res) => {
         apartment = await connection.query("SELECT id FROM apartments WHERE name = ?", apartment);
         await connection.query(`
             UPDATE keysets
-            SET user = '1'
+            SET location = 'Oficina', user = '${user}'
             WHERE name = '${keyset}' and apartment = '${apartment[0].id}'
         `);
         keyset = await connection.query(`
@@ -190,8 +192,8 @@ const returnKey = async (req, res) => {
             WHERE name = '${keyset}' and apartment = '${apartment[0].id}'
         `);
         await connection.query(`
-            INSERT INTO history (sender, receiver, keyset)
-            VALUES ('${user}', '1', '${keyset[0].id}')
+            INSERT INTO user_history (user, keyset, action, location, apartment)
+            VALUES ('${user}', '${keyset[0].id}', 'Devolver', 'Oficina', '${apartment[0].id}')
         `);
         options['message'] = 'success';
         return res.status(200).render('./users/return', options);
@@ -207,9 +209,12 @@ const render_query = async (req, res) => {
             return res.redirect('/login?redirect=true');
         }
         let options = {
-            title: "Consultar Llave",
+            title: "Consultar Llavero",
             message: "",
             keysets: null
+        }
+        if (req.query.msg) {
+            options["message"] = req.query.msg;
         }
         const connection = await getConnection();
         let apartments = await connection.query(`SELECT name FROM apartments`);
@@ -224,23 +229,27 @@ const render_query = async (req, res) => {
 const query = async (req, res) => {
     try {
         let { apartment } = req.body
-        console.log(apartment);
         let options = {
-            title: "Consultar Llave",
+            title: "Consultar Llavero",
             message: "",
-            apartments: apartment
+            apartments: null
+        }
+        if (apartment == "") {
+          return res.redirect('/users/query?msg=missing');
         }
         const connection = await getConnection();
         let apartment_id = await connection.query(`SELECT id FROM apartments WHERE name = '${apartment}'`);
+        if (apartment_id.length == 0) {
+          return res.redirect('/users/query?msg=fail')
+        }
         let keysets = await connection.query(`
-            SELECT name, extra,
+            SELECT name, location, description,
                 (SELECT name FROM apartments WHERE id = keysets.apartment) as "apartment",
                 (SELECT name FROM users WHERE id = keysets.user) as "user"
             FROM keysets
             WHERE apartment = '${apartment_id[0].id}'
         `);
         options["keysets"] = keysets;
-        console.log(keysets);
         return res.status(200).render('./users/query', options);
     } catch (err) {
         return res.status(500).render(err.message);
@@ -248,13 +257,7 @@ const query = async (req, res) => {
 };
 
 
-const logout = (req, res) => {
-    req.session.destroy();
-    return res.redirect('/login');
-};
-
 module.exports = {
-    logout,
     render_pickup,
     pickup_getKeysets,
     pick_up,

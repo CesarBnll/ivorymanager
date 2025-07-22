@@ -1,5 +1,4 @@
-let apartments = document.getElementById('apt').dataset.apt;
-apartments = apartments.split(',');
+let apartments = JSON.parse(document.getElementById('apt').dataset.apt);
 
 const resultApt = document.querySelector('[result-box-apt]')
 const searchApt = document.getElementById('search_apt');
@@ -9,9 +8,11 @@ searchApt.onkeyup = () => {
     let input = searchApt.value;
     if (input.length) {
         for (let i =0; i < apartments.length; i++) {
-            const isVisible = apartments[i].toLowerCase().includes(input.toLowerCase());
-            if (isVisible) result.push(apartments[i]);
+            const isVisible = apartments[i].name.toLowerCase().includes(input.toLowerCase());
+            if (isVisible) result.push(apartments[i].name);
         }
+    } else {
+        resultApt.innerHTML = "";
     }
     display(result, resultApt, 'apt');
 }

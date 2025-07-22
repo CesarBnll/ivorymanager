@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="/css/users/key_actions.css">
 
     <!-- Propietary Scripts -->
-    <script src="/scripts/user_searchkeysets.js"></script>
+    <script src="/scripts/user_searchkeysets.js" defer></script>
+    <script src="/scripts/modal.js" defer></script>
 </head>
 <body>
     <div class="d-flex">
@@ -33,7 +34,7 @@
 
     <div class="container p-5">
     <% if (!keysets) { %>
-        <h1 class="montserrat-bd p-4 my-5 text-center">Consultar una llave</h1>
+        <h1 class="montserrat-bd my-5 text-center">Consultar llavero</h1>
         <form action="/users/query" method="post" class="container">
             <div class="row my-3 mx-auto">
                 <span class="form-label h5">Buscar por Apartamento:</span>
@@ -49,35 +50,52 @@
             <div class="row pt-2 pb-4 mt-4">
                 <button type="submit" class="col-6 btn mx-auto">Buscar</button>
             </div>
-            <% if (message != "") { %>
+            <% if (message == "missing") { %>
                 <div class="alert alert-warning" role="alert">
                     Por favor rellene el campo!
                 </div>
-            <% } %>
+            <% } else if (message == "fail") { %>
+                <div class="alert alert-danger" role="alert">
+                    Por favor seleccione un apartamento válido!
+                </div>
+            <% } %>   
         </form>
     <% } else { %>
-        <table class="my-table">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Apartamento</th>
-                    <th scope="col">Responsable</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(let row = 0; row < keysets.length; row++) { %>
+        <div class="scrollable-table">
+            <table class="my-table">
+                <thead>
                     <tr>
-                        <% if (keysets[row].extra == 'yes') { %>
-                            <td><%= keysets[row].name + " (Extra)" %></td>
-                        <% } else { %>
-                            <td><%= keysets[row].name %></td>
-                        <% } %>
-                        <td><%= keysets[row].apartment %></td>
-                        <td><%= keysets[row].user %></td>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apartamento</th>
+                        <th scope="col">Ubicación</th>
+                        <th scope="col">Responsable</th>
+                        <th scope="col">Llaves</th>
                     </tr>
-                <% } %>    
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% for(let row = 0; row < keysets.length; row++) { %>
+                        <tr>
+                            <td><%= keysets[row].name %></td>
+                            <td><%= keysets[row].apartment %></td>
+                            <td><%= keysets[row].location %></td>
+                            <td><%= keysets[row].user %></td>
+                            <td><button class="btn" onclick="displayModal(<%= row %>)">Ver</button></td>
+                        </tr>
+                        <div class="modal">
+                            <div class="modal-content">
+                                <div class="flex">
+                                      <span class="close" onclick="closeModal(<%= row %>)">&times;</span>
+                                      <h3><%= keysets[row].name %></h3>
+                                </div>
+                                <div class="flex">
+                                    <p class="my-auto"><%= keysets[row].description %></p>
+                                </div>
+                            </div>  
+                        </div>
+                    <% } %>    
+                </tbody>
+            </table>
+        </div>
         <div class="row pt-2 pb-4 mt-4">
             <a href="/users/query" class="col-6 btn mx-auto">Buscar de Nuevo</a>
         </div>

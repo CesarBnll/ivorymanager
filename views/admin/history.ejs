@@ -21,6 +21,10 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      
+    <!-- Propietary Scripts -->
+    <script src="/scripts/tab.js" defer></script>
+    <script src="/scripts/admin_generalsearch.js" defer></script>
 </head>
 <body class="montserrat-rg">
     <div class="d-flex">
@@ -28,13 +32,128 @@
         <img src="/img/logotipo-1.png" class="mx-auto my-5 p-3 ivory-logo" alt="Ivory Homes">
     </div>
 
-    <div class="container mx-auto">
-        <% for (let i =0; i < history.length; i++) { %>
-            <div class="alert alert-warning" role="alert">
-                <%= history[i].sender %> le dio <%= history[i].keyset %> de <%= history[i].keyset_apt %> a <%= history[i].receiver %><br>
-                Fecha: <%= history[i].moveDate %>
+    <div class="tab d-flex mx-auto justify-content-evenly">
+        <button id="<%= tab1 %>" class="tablinks flex-fill" onclick="openTab(event, 'users')">Usuarios</button>
+        <button id="<%= tab2 %>" class="tablinks flex-fill" onclick="openTab(event, 'admins')">Administración</button>
+    </div>
+  
+    <div id="users" class="tabcontent container pt-3">
+        <% if(!user_history) { %>
+            <form action="/admin/history/users" method="post">
+                <div class="row my-3 mx-auto">
+                    <span class="form-label h5">Buscar por Apartamento:</span>
+                    <div class="search-box">
+                        <div class="d-flex">
+                            <input id="search_apt" class="col form-control" type="search" placeholder="Buscar.." name="apartment">
+                            <div class="col btn-search"><i class="fa fa-search"></i></div>
+                        </div>
+                    </div>
+                    <div class="result-box" result-box-apt>
+                    </div>
+                </div>
+                <div class="row my-3 mx-auto">
+                    <span class="form-label h5">Buscar por Fecha:</span>
+                    <input type="date" class="col form-control form-date" min="2024-06-13" name="date">
+                    <p class="mt-2 mb-0">Si desea traer toda la tabla solo presione "Buscar"</p>
+                </div>
+                <div class="row pt-2 pb-4">
+                    <button type="submit" class="col-6 btn mx-auto">Buscar</button>
+                </div>
+                <% if (msg_user) { %>
+                    <div class="alert alert-warning" role="alert">
+                        No se encontraron coincidencias!
+                    </div>
+                <% } %>
+            </form>
+        <% } else { %>
+            <div class="scrollable-table">
+                <table class="my-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Apartamento</th>
+                            <th scope="col">Llavero</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Acción</th>
+                            <th scope="col">Ubicación</th>
+                            <th scope="col">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let row = 0; row < user_history.length; row++) { %>
+                            <tr>
+                                <td><%= user_history[row].apartment %></td>
+                                <td><%= user_history[row].keyset %></td>
+                                <td><%= user_history[row].user %></td>
+                                <td><%= user_history[row].action %></td>
+                                <td><%= user_history[row].location %></td>
+                                <td><%= user_history[row].moveDate %></td>
+                            </tr>
+                        <% } %>    
+                    </tbody>
+                </table>
+            </div>
+            <div class="row pt-2 mt-3">
+                <a href="/admin/history" class="col-6 btn mx-auto">Buscar de Nuevo</a>
             </div>
         <% } %>
     </div>
+  
+    <div id="admins" class="tabcontent container pt-3">
+        <% if(!admin_history) { %>
+            <form action="/admin/history/admins" method="post">
+                <div class="row my-3 mx-auto">
+                    <span class="form-label h5">Buscar por Usuario:</span>
+                    <div class="search-box">
+                        <div class="d-flex">
+                            <input id="search_usr" class="col form-control" type="search" placeholder="Buscar.." name="user">
+                            <div class="col btn-search"><i class="fa fa-search"></i></div>
+                        </div>
+                    </div>
+                    <div class="result-box" result-box-usr>
+                    </div>
+                </div>
+                <div class="row my-3 mx-auto">
+                    <span class="form-label h5">Buscar por Fecha:</span>
+                    <input type="date" class="col form-control form-date" min="2024-06-13" name="date">
+                    <p class="mt-2 mb-0">Si desea traer toda la tabla solo presione "Buscar"</p>
+                </div>
+                <div class="row pt-2 pb-4">
+                    <button type="submit" class="col-6 btn mx-auto">Buscar</button>
+                </div>
+                <% if (msg_admin) { %>
+                    <div class="alert alert-warning" role="alert">
+                        No se encontraron coincidencias!
+                    </div>
+                <% } %>
+            </form>
+        <% } else { %>
+            <div class="scrollable-table">
+                <table class="my-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Accion</th>
+                            <th scope="col">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let row = 0; row < admin_history.length; row++) { %>
+                            <tr>
+                                <td><%= admin_history[row].user %></td>
+                                <td><%= admin_history[row].description %></td>
+                                <td><%= admin_history[row].actionDate %></td>
+                            </tr>
+                        <% } %>    
+                    </tbody>
+                </table>
+            </div>
+            <div class="row pt-2 mt-3">
+                <a href="/admin/history/admins" class="col-6 btn mx-auto">Buscar de Nuevo</a>
+            </div>
+        <% } %>
+    </div>
+    
+    <div id="apt" data-apt="<%= apartments %>"></div>
+    <div id="usr" data-usr="<%= users %>"></div>
 </body>
 </html>

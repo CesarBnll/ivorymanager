@@ -15,8 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     
     <!-- Propietary CSS -->
-    <link rel="stylesheet" href="../../css/main.css">
-    <link rel="stylesheet" href="../../css/home.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/home.css">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -38,6 +38,11 @@
         <a class="btn" href="/users/query">
             <i class="fa fa-info-circle me-3" aria-hidden="true"></i>Consultar
         </a>
+        <% if (user_type == "admin") { %>
+            <a class="btn" href="/admin">
+                <i class="fa fa-level-up me-3" aria-hidden="true"></i>Página de Administradores
+            </a>
+        <% } %>
         <form action="/users/logout" method="post">
             <button type="submit" class="btn">
                 <i class="fa fa-sign-out me-3" aria-hidden="true"></i>Cerrar Sesión
