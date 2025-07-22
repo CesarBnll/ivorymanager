@@ -3,11 +3,13 @@ const { createConnection } = require('promise-mysql');
 
 const connection = createConnection({
     host: process.env.HOST,
-    port: 3306,
+    port: process.env.PORT,
     user: process.env.USERNAME,
     password: process.env.PASSWORD,
     database: process.env.DATABASE
 });
+
+console.log(process.env.PORT);
 
 const getConnection = () => {
     return connection;
