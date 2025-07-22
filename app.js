@@ -6,6 +6,8 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var ejs = require('ejs');
 
+console.log("PATH HERE: " + path)
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
